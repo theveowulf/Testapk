@@ -1,0 +1,50 @@
+name: Compiler l'APK Techno Fighters
+
+on:
+  push:
+    branches: [techno-fighters]
+    paths:
+      - 'TechnoFighters/**'
+      - '.github/workflows/techno-fighters-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: TechnoFighters
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Compiler
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Renommer l'APK
+        run: cp app/build/outputs/apk/release/app-release.apk TechnoFighters.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TechnoFighters-apk
+          path: TechnoFighters/TechnoFighters.apk
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: techno-fighters-v${{ github.run_number }}
+          name: Techno Fighters (version ${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          files: TechnoFighters/TechnoFighters.apk
