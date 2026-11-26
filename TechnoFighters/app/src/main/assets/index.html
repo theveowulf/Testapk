@@ -250,6 +250,7 @@ function updEnt(e,dt){
   e.x+=e.kb*dt;e.kb-=e.kb*8*dt;
   const dx=P.x-e.x,dy=P.y-e.y,held=P.st==='act'&&P.act===e;
   if(e.type==='printer'){
+    if(!held&&!(e.prog>0)){e.wt-=dt;if(e.wt<=0||e.px==null){e.wt=rnd(2,4);e.px=rnd(camX+24,camX+W-24)}const ddx=e.px-e.x;if(Math.abs(ddx)>2)e.x+=Math.sign(ddx)*Math.min(Math.abs(ddx),30*dt)}
     e.face=dx>0?1:-1;e.y+=Math.sign(dy)*Math.min(Math.abs(dy),14*dt);e.cd-=dt;
     if(e.cd<=0&&e.prog>0)e.cd=1;if(e.cd<=0){e.cd=rnd(2.3,3.3);shots.push({x:e.x+e.face*13,y:e.y,z:12,vx:e.face*70,vy:0,k:'paper'});sfx(900,.05,'square',.03)}
   }else if(e.type==='mbot'){
